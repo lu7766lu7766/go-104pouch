@@ -9,6 +9,8 @@ import (
 
 	"github.com/chromedp/chromedp"
 	"github.com/gin-gonic/gin"
+	"github.com/go-rod/rod/lib/input"
+	"github.com/ysmood/rod"
 )
 
 func Pouch(ctx *gin.Context) {
@@ -46,6 +48,24 @@ func Pouch(ctx *gin.Context) {
 	if err := ioutil.WriteFile("fullScreenshot.png", buf, 0644); err != nil {
 		log.Fatal(err)
 	}
+
+	ctx.JSON(http.StatusOK, gin.H{"code": 0, "result": "success"})
+}
+
+func PouchRod(ctx *gin.Context) {
+
+	username := ctx.DefaultPostForm("username", "")
+	password := ctx.DefaultPostForm("password", "")
+
+	page := rod.New().MustConnect().MustPage("https://bsignin.104.com.tw/login")
+	page.MustElement(`.BaseInput__view[type="text"]`).MustInput(username)
+	page.MustElement(`.BaseInput__view[type="password"]`).MustInput(password).MustPress(input.Enter)
+	page.MustElement(`.Product__product`)
+	wait := page.MustWaitNavigation()
+	page.MustNavigate(`https://pro.104.com.tw/psc2`)
+	wait()
+	page.MustElement(`.fa.fa-times`).MustClick()
+	page.MustElement(`.btn.btn-white.btn-lg.btn-block`).MustClick()
 
 	ctx.JSON(http.StatusOK, gin.H{"code": 0, "result": "success"})
 }
