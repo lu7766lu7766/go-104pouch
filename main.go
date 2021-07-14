@@ -4,7 +4,7 @@ import (
 	"os"
 	"time"
 
-	"al.api/service"
+	"go-104pouch/service"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
